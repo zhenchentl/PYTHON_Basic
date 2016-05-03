@@ -1,0 +1,37 @@
+#coding=utf-8
+
+import numpy
+import re
+import xml.dom.minidom
+
+
+def splitXML(split_flag, xml_file_path):
+    with open(xml_file_path, 'r') as xml_file:
+        file_count = 0
+        split_xml_file=None
+        for line in xml_file.readlines():
+            #split_xml_file = None
+            a=re.findall(split_flag,line)
+            if a:
+                if split_xml_file is not None:
+                    split_xml_file.close()
+
+                new_xml_file1 = str(a[0]) + '.xml'
+                split_xml_file = open(new_xml_file1, 'w+')
+                file_count += 1
+
+            else:
+                pass
+            if split_xml_file is not None:
+                if a:
+                    continue
+                else:
+                    split_xml_file.write(line)
+
+
+
+#打开TXT格式的文件，按照命令行进行切分
+xml_file_path='7360FX_XML.txt'
+split_flag=r'typ:isadmin># (.*?)xml'
+
+splitXML(split_flag,xml_file_path)
