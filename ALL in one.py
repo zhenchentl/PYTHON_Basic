@@ -41,7 +41,7 @@ def splittxt2(split_flag, file_path,flagnum,j,config_rate,table,rateflag):
             #print rate
             table.write(i,j,a[i-1])
             if rate> 0.8:
-                table.write(i,j+4,rate*100,style)
+                table.write(i,j+4,rate*100,style)# if the value is large than 0.8, the value will be red'''
             else:
                 table.write(i,j+4,rate*100)
 
@@ -57,6 +57,10 @@ style=xlwt.XFStyle()
 style.pattern=pattern
 
 def splitflagfun(file_path,table):
+    '''
+    Splitflagfun() function is defined to the input the regular expressions 
+    like in line 64 to line 71 which can bedfined by the file style:
+    '''
     split_flag1=r'"PON-(.*)::UPCIR.*?'
     split_flag2=r'.*?DNMAXMCBW=(.*):.*'
     split_flag3=r'.*?DNMAXMCBW=.*:(.*)"'
@@ -77,9 +81,9 @@ def splitflagfun(file_path,table):
 
 def getFiles(path):
     '''
-通过os.walk遍历path下的所有文件夹和目录，每次遍历产生一个三元组
-第0个为当前目录，第1个为当前目录的子目录列表，第2个为当前目录下所有文件的列表
-'''
+    通过os.walk遍历path下的所有文件夹和目录，每次遍历产生一个三元组
+    第0个为当前目录，第1个为当前目录的子目录列表，第2个为当前目录下所有文件的列表
+    '''
     for root,dirs,item in os.walk(path):
         #nm=0
         for file in item:
@@ -89,10 +93,10 @@ def getFiles(path):
             table=file1.add_sheet(str(b[0]))
             #nm+=1
             splitflagfun(file_path,table)
-        file1.save('bandwidth.xls')
+        file1.save('bandwidth.xls') #生成EXCEL表格的地方
 
 
-getFiles('D:\Pycharm project\\test2')
+getFiles('D:\Pycharm project\\test2') # 存放LOG文件的文件夹位置
 
 ###############################MULTICAST######################################
 #coding=utf-8
@@ -181,7 +185,7 @@ import xlwt
 
 
 
-def floata(data22):
+def floata(data22): #把列表中的文本信息全部换成数值
     data22=np.array(data22)
     data22[data22=='ENABLED']=1
     data22[data22=='DISABLED']=0
@@ -215,11 +219,11 @@ def floata(data22):
     data22[data22=='VOBB_VLAN822']=-3
     return data22
 
-def traintree(data22,table):
+def traintree(data22,table):#训练样本，并对新进入的数据进行分类
     ''''' 数据读入 '''
     data   = []
     labels = []
-    with open("YZYB.txt") as ifile:
+    with open("YZYB.txt") as ifile:#训练样本的位置
             for line in ifile:
                 tokens = line.strip().split('	')
                 data.append([float(tk) for tk in tokens[:-1]])
@@ -248,15 +252,15 @@ def traintree(data22,table):
     ''''' 系数反映每个特征的影响力。越大表示该特征在分类中起到的作用越大 '''
     print(clf.feature_importances_)
     #clf = tree.DecisionTreeClassifier(criterion='entropy')
-    data22=np.array(data22)
+    data22=np.array(data22) #传入的数据的位置
     #print data22
     answer=clf.predict(data22)
     i=1
     for an in answer:
         if an==0:
-            table.write(i,5,'NOK',style)
+            table.write(i,5,'NOK',style) #标示
         else:
-            table.write(i,5,'OK')
+            table.write(i,5,'OK')#table为需要写入的表格
         i+=1
 
 
@@ -270,7 +274,7 @@ def splittxt(split_flag, file_path,flagnum,j,table,data22):
         for i in xrange(1,len(a)+1):
             table.write(i,j,a[i-1])
             b=floata(a)
-            data22[i-1,j]=b[i-1]
+            data22[i-1,j]=b[i-1]#生成相应的暂存矩阵来存放数据
     return data22
 
 
@@ -296,7 +300,7 @@ def splitflagfun(file_path,table):
     splittxt(split_flag3,file_path,'NAME',2,table,data22)
     splittxt(split_flag4,file_path,'DHCPRELAY',3,table,data22)
     data22=splittxt(split_flag5,file_path,'PPPOERELAY',4,table,data22)
-    traintree(data22,table)
+    traintree(data22,table)#增加了机器学习的代码片段
 
     #return data22
 
