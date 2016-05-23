@@ -1,11 +1,23 @@
 #coding=utf-8
+'''the who system have three part to make exce report'''
 ############################BAND WIDTH#####################
+'''
+The whole script inlcued three functions: getfiles() splitflagfun() and splittxt().
+Getfiles() function is the main function to open file and excel table, 
+extract text and write the values to the excel and close excel ,
+the main function need variable like the location of the files which people want to extract
+'''
+
 import re
 import xlwt
 import os
 import numpy as np
 
-def splittxt(split_flag, file_path,flagnum,j,table):
+def splittxt(split_flag, file_path,flagnum,j,table): 
+    '''
+    Splittxt() function is defined to read the file and extract values in the file through regulars define by spliflagfun()
+    this is a gerneral function.
+    '''
     with open(file_path, 'r') as orfile:
         items=orfile.read()
         a=re.findall(split_flag,items)
@@ -15,6 +27,9 @@ def splittxt(split_flag, file_path,flagnum,j,table):
             table.write(i,j,a[i-1])
 
 def splittxt2(split_flag, file_path,flagnum,j,config_rate,table,rateflag):
+    '''
+    this function is used to find the field and caculate the traffic current
+    '''
     with open(file_path, 'r') as orfile:
         items=orfile.read()
         a=re.findall(split_flag,items)
