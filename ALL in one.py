@@ -151,10 +151,7 @@ def splitflagfun(file_path,table):
     splittxt(split_flag12,file_path,'SRCIPADDR',6,table)
 
 def getFiles(path):
-    '''
-通过os.walk遍历path下的所有文件夹和目录，每次遍历产生一个三元组
-第0个为当前目录，第1个为当前目录的子目录列表，第2个为当前目录下所有文件的列表
-'''
+    ''''''
     for root,dirs,item in os.walk(path):
         nm=0
         for file in item:
@@ -306,10 +303,7 @@ def splitflagfun(file_path,table):
 
 
 def getFiles(path):
-    '''
-通过os.walk遍历path下的所有文件夹和目录，每次遍历产生一个三元组
-第0个为当前目录，第1个为当前目录的子目录列表，第2个为当前目录下所有文件的列表
-'''
+
     for root,dirs,item in os.walk(path):
         #nm=0
         for file in item:
