@@ -1,0 +1,100 @@
+import sys,time,os,datetime,traceback
+from collections import *
+from datetime import datetime,timedelta,date
+from decimal import *
+import random,hashlib
+
+
+def test():
+    sec_key = "xlrao"
+
+    data = []
+    item = {
+    "cardIndex" : u"6226094710303387",
+    "cardNo" : u"622609******3387",
+    "bankCode" : "CMB",
+    "cardType" : 0,
+    "cardholder" : u"辛文珍",
+    "cardholderFlag" : 1,
+    "identityType" : u"IDENTITYCARD",
+    "identityCode" : u"152322198506210722",
+    "identityCodeFlag" : 0,
+    "validate" : None,
+    "validateFlag" : 0,
+    "mobile" : u"13214054770",
+    "mobileFlag" : 1,
+    }
+    clear_card = item["cardIndex"]
+    if clear_card is None: return
+    card_sec = hashlib.sha256(sec_key + clear_card.encode("utf-8")).hexdigest()
+    #print '加密后的卡号：',card_sec
+    #1
+    salt = card_sec[-10:]
+    #print '显示的卡号(salt)：',salt
+    data.append(salt)
+    #2
+    data.append("0")
+    #3
+    data.append(hashlib.sha256(sec_key + clear_card.encode("utf-8")).hexdigest())
+    #4
+    data.append(item["cardNo"])
+    #5
+    data.append(item["bankCode"])
+    #6 0=借记卡、1=信用卡,2准贷记卡
+    data.append(str(item["cardType"]))
+
+    #7
+    cardholder = item["cardholder"] or u""
+    #print '持卡人:',cardholder
+    data.append(hashlib.sha256(sec_key + salt + cardholder.encode("utf-8")).hexdigest())
+    #print '数据集+持卡人加密：', data
+    #8
+    mask = (u"*" + cardholder[1:]).encode("utf-8") if item["cardholder"] else ""
+    data.append(mask)
+    #print '数据集+持卡人去掉姓名：', data
+    #9
+    data.append("true" if item["cardholderFlag"] == 1 else "false")
+    #print '数据集+持卡人Flag：', data
+    #10
+    if item["identityType"] != "IDENTITYCARD": return
+    identity_code = item["identityCode"] or u""
+    identity_code = item["identityCode"]
+    #print '身份信息：',identity_code
+    data.append(hashlib.sha256(sec_key + salt + identity_code.encode("utf-8")).hexdigest())
+    #print '添加身份信息的数据集：',data
+    #11
+    identity_type = item["identityType"] or ""
+    data.append(item["identityType"] or "")
+    #print '添加身份信息类型的数据集：', data
+    #12
+    mask = identity_code[-6:]
+    #print mask
+    if len(identity_code) > 6: mask = "*" * (len(identity_code) - 6) + mask
+    data.append(mask)
+    print
+    #13
+    data.append("true" if identity_code and item["identityCodeFlag"] == 1 else "false")
+    #14
+    validate = item["validate"] or ""
+    data.append(hashlib.sha256(sec_key + salt + validate.encode("utf-8")).hexdigest())
+    #15
+    data.append("true" if item["validateFlag"] == 1 else "false")
+    #16
+    mobile = item["mobile"] or ""
+    mobile = item["mobile"]
+    data.append(hashlib.sha256(sec_key + salt + mobile.encode("utf-8")).hexdigest())
+    #17
+    mask = mobile[-4:]
+    if len(mobile) >= 8:
+        mask = mobile[0:(len(mobile)-8)] + "****" + mask
+    elif len(mobile) > 4:
+        mask = "*" * (len(mobile)-4) + mask
+    data.append(mask)
+    #18
+    data.append("true" if mobile and item["mobileFlag"] == 1 else "false")
+    print '#'*20
+
+    print "\n".join([str(s) for s in data])
+
+if __name__ == "__main__":
+    test()
