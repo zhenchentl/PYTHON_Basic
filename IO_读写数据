@@ -1,0 +1,33 @@
+#coding=utf-8
+import re
+import os
+import xlwt#这里是excel的写入，如果是读入应该写为import xlrd
+
+f=open('D:\Python27\\TEST_1.txt','r+')
+'''打开相应位置的txt文件，使用的是读取模式，可以写入，但是是在结尾写入，不能使用 w+，因为会直接覆盖掉原来的数据'''
+ReplacePattern1=r'\[Rec 0\d.*?]'#替换
+ReplacePattern2=r'\''
+ReplacePattern3=r'\#.*?'
+file=xlwt.Workbook()#打开excel
+table=file.add_sheet('LGTEST')#打开相应的表格
+i=0
+j=0
+for line in f.readlines():#读取全部的内容，注意Python的内存最大允许的空间是512MB，也可以是读取 f.readline()
+    #print line
+    out=re.sub(ReplacePattern1,'',str(line))#替换掉不需要的内容
+    out=out.strip()
+    out=re.sub(ReplacePattern2,'',str(out))
+    out=out.strip()
+    out=re.sub(ReplacePattern3,'',str(out))
+    out=out.strip()
+    intern(out)#把得到的数值变成整型
+    print out
+    new=out.split(',')#在这里可以验证一下，注意我们得到的数据的长度不同，直接使用下面的口令会超出范围，以后编写时注意查看长度
+    if len(new)>1:#把不是大于1的全部过滤掉
+        for j in range(0,6):#对于其中的6个元素分别写入相应的位置
+            table.write(i,j,new[j])
+            j+=1
+    i+=1
+
+file.save('demo.xls')#关闭excel表格
+f.close()#关闭txt
