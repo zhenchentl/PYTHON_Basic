@@ -1,0 +1,18 @@
+import os
+
+from win32com import client as wc
+
+def getFiles(path):
+    i=1
+    for root,dirs,item in os.walk(path):
+        for file in item:
+            word=wc.Dispatch('Word.Application')
+            file_path=root+str('\\')+file
+            doc=word.Documents.Open(file_path)
+            doc.SaveAs('D:\\anaconda project\TEST\\'+str(i)+'.txt',4)
+            i+=1
+            doc.Close()
+            word.Quit()
+
+if __name__ == '__main__':
+    getFiles('D:\\anaconda project\\train samples(1-100)')
